@@ -18,6 +18,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { ClientOnly } from "@/components/client-only";
 
 export function NavMain({
   items,
@@ -45,25 +46,23 @@ export function NavMain({
 
           // If item has sub-items, render as collapsible
           if (item.items && item.items.length > 0) {
-            return (
-              <Collapsible
-                key={item.title}
-                asChild
-                defaultOpen={isItemActive}
-                className="group/collapsible"
+            const menuButton = (
+              <SidebarMenuButton
+                tooltip={item.title}
+                // isActive={isItemActive}
               >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-                      tooltip={item.title}
-                      // isActive={isItemActive}
-                    >
-                      {item.icon && <item.icon />}
-                      <span>{item.title}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
+                {item.icon && <item.icon />}
+                <span>{item.title}</span>
+                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+              </SidebarMenuButton>
+            );
+
+            return (
+              <ClientOnly
+                key={item.title}
+                fallback={
+                  <SidebarMenuItem>
+                    {menuButton}
                     <SidebarMenuSub>
                       {item.items.map((subItem) => {
                         const isSubItemActive = pathname === subItem.url;
@@ -81,9 +80,40 @@ export function NavMain({
                         );
                       })}
                     </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
+                  </SidebarMenuItem>
+                }
+              >
+                <Collapsible
+                  asChild
+                  defaultOpen={isItemActive}
+                  className="group/collapsible"
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      {menuButton}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {item.items.map((subItem) => {
+                          const isSubItemActive = pathname === subItem.url;
+                          return (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={isSubItemActive}
+                              >
+                                <a href={subItem.url}>
+                                  <span>{subItem.title}</span>
+                                </a>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          );
+                        })}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
+              </ClientOnly>
             );
           }
 

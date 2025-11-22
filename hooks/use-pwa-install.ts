@@ -37,7 +37,7 @@ export const usePWAInstall = (): PWAInstallState => {
     return () => {
       window.removeEventListener(
         "beforeinstallprompt",
-        handleBeforeInstallPrompt,
+        handleBeforeInstallPrompt
       );
     };
   }, [isSupported]);
@@ -95,4 +95,3 @@ export const usePWAInstall = (): PWAInstallState => {
     installApp,
   };
 };
-

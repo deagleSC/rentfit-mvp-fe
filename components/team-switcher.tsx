@@ -11,6 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { ClientOnly } from "@/components/client-only";
 
 // import NimbusLogo from "@/assets/logo5.svg";
 import Image from "next/image";
@@ -21,8 +22,8 @@ export function SidebarBranding(props: SidebarMenuProps) {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <ClientOnly
+          fallback={
             <SidebarMenuButton size="lg">
               <Image src={logo} alt={name} width={36} height={36} />
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -30,8 +31,20 @@ export function SidebarBranding(props: SidebarMenuProps) {
                 <span className="truncate text-xs">{plan}</span>
               </div>
             </SidebarMenuButton>
-          </DropdownMenuTrigger>
-        </DropdownMenu>
+          }
+        >
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuButton size="lg">
+                <Image src={logo} alt={name} width={36} height={36} />
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">{name}</span>
+                  <span className="truncate text-xs">{plan}</span>
+                </div>
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+          </DropdownMenu>
+        </ClientOnly>
       </SidebarMenuItem>
     </SidebarMenu>
   );

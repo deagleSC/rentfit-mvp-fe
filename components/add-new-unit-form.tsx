@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -62,6 +63,7 @@ export function AddNewUnitForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const router = useRouter();
   const currentUser = useAuthStore((state) => state.currentUser);
   const {
     countries,
@@ -93,6 +95,7 @@ export function AddNewUnitForm({
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const selectedCountryId = watch("address.countryId");
   const selectedStateId = watch("address.stateId");
 
@@ -151,6 +154,8 @@ export function AddNewUnitForm({
       reset({
         status: "vacant",
       });
+      // Redirect to units page after successful addition
+      router.push("/properties/units");
     }
   };
 

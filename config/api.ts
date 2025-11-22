@@ -7,4 +7,6 @@ export const API_ROUTES = {
   GET_STATES: `${API_URL}/api/static/states`,
   GET_CITIES: `${API_URL}/api/static/cities`,
   ADD_UNIT: `${API_URL}/api/units`,
+  GET_UNITS: `${API_URL}/api/units`,
+  GET_UNIT_BY_ID: (id: string) => `${API_URL}/api/units/${id}`,
 };
