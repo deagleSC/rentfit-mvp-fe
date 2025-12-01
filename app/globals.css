@@ -154,3 +154,59 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Enhanced Toast Styling */
+  [data-sonner-toast][data-type="success"] {
+    @apply bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-900/50 text-green-900 dark:text-green-100;
+    border-left-width: 4px;
+    border-left-color: rgb(34 197 94 / 0.8);
+  }
+
+  [data-sonner-toast][data-type="success"] [data-icon] {
+    @apply text-green-600 dark:text-green-400;
+  }
+
+  [data-sonner-toast][data-type="error"] {
+    @apply bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50 text-red-900 dark:text-red-100;
+    border-left-width: 4px;
+    border-left-color: rgb(239 68 68 / 0.8);
+  }
+
+  [data-sonner-toast][data-type="error"] [data-icon] {
+    @apply text-red-600 dark:text-red-400;
+  }
+
+  [data-sonner-toast][data-type="warning"] {
+    @apply bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50 text-amber-900 dark:text-amber-100;
+    border-left-width: 4px;
+    border-left-color: rgb(245 158 11 / 0.8);
+  }
+
+  [data-sonner-toast][data-type="warning"] [data-icon] {
+    @apply text-amber-600 dark:text-amber-400;
+  }
+
+  [data-sonner-toast][data-type="info"] {
+    @apply bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50 text-blue-900 dark:text-blue-100;
+    border-left-width: 4px;
+    border-left-color: rgb(59 130 246 / 0.8);
+  }
+
+  [data-sonner-toast][data-type="info"] [data-icon] {
+    @apply text-blue-600 dark:text-blue-400;
+  }
+
+  [data-sonner-toast] {
+    @apply shadow-lg border-2 rounded-lg;
+    backdrop-filter: blur(8px);
+  }
+
+  [data-sonner-toast] [data-title] {
+    @apply font-semibold;
+  }
+
+  [data-sonner-toast] [data-description] {
+    @apply text-sm opacity-90;
+  }
+}

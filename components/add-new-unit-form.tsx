@@ -491,7 +491,7 @@ export function AddNewUnitForm({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full max-w-sm mt-8"
+              className="max-w-fit mt-8"
             >
               {isSubmitting ? "Submitting..." : "Add Unit"}
             </Button>

@@ -89,12 +89,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: ClipboardList,
       items: [
         {
-          title: "Active Tenancies",
-          url: "/tenancies/active",
+          title: "All Tenancies",
+          url: "/tenancies",
         },
         {
-          title: "Pending / Upcoming",
-          url: "/tenancies/upcoming",
+          title: "Add New Tenancy",
+          url: "/tenancies/add-new-tenancy",
         },
       ],
     },
@@ -122,11 +122,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Evidence & Documents",
       url: "/evidence-documents",
       icon: FolderArchive,
-    },
-    {
-      title: "Agreement Builder",
-      url: "/agreement-builder",
-      icon: FileText,
     },
   ];
 
