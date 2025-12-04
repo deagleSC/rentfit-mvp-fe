@@ -4,7 +4,13 @@ import AppLayout from "@/layouts/app-layout";
 import { useEffect, useMemo, useState } from "react";
 import { useAuthStore } from "@/zustand/stores/auth-store";
 import { useTenancyStore } from "@/zustand/stores/tenancy-store";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
@@ -18,13 +24,10 @@ import {
 } from "@/components/ui/select";
 import {
   Calendar,
-  User,
   FileText,
   Download,
-  CheckCircle2,
   CreditCard,
   Building2,
-  ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
@@ -69,6 +72,8 @@ interface PopulatedTenancy extends Omit<
 
 const getTenancyStatusBadge = (status: string) => {
   switch (status) {
+    case "upcoming":
+      return "bg-blue-500 text-white";
     case "active":
       return "bg-green-500 text-white";
     case "terminated":
@@ -225,364 +230,240 @@ export default function RentStatusPage() {
         )}
 
         {selectedTenancy && (
-          <>
-            {/* Main Grid Layout - Professional Corporate Design */}
-            <div className="grid gap-8 lg:grid-cols-12">
-              {/* Left Column - Main Content (8 columns) */}
-              <div className="lg:col-span-8 space-y-8">
-                {/* Combined Card: Rent Overview & Tenancy Information */}
-                <Card className="border shadow-sm">
-                  <CardHeader>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Rent Overview */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Rent Overview</CardTitle>
+                    <CardDescription>
+                      Your monthly rent amount, payment schedule, and property
+                      details
+                    </CardDescription>
+                  </div>
+                  <Badge
+                    className={cn(
+                      getTenancyStatusBadge(selectedTenancy.status)
+                    )}
+                  >
+                    {selectedTenancy.status}
+                  </Badge>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      Monthly Rent
+                    </p>
+                    <p className="text-3xl font-bold">
+                      ₹{selectedTenancy.rent?.amount?.toLocaleString() || 0}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1 capitalize">
+                      {selectedTenancy.rent?.cycle || "monthly"} cycle
+                    </p>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {selectedTenancy.rent?.dueDateDay && (
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">
+                          Due Date
+                        </p>
+                        <p className="font-semibold">
+                          {selectedTenancy.rent.dueDateDay}
+                          {getOrdinalSuffix(selectedTenancy.rent.dueDateDay)} of
+                          each month
+                        </p>
+                      </div>
+                    )}
                     <div>
-                      <CardTitle className="text-2xl font-semibold tracking-tight">
-                        Rent Overview & Tenancy Information
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Current tenancy payment and property details
+                      <p className="text-sm text-muted-foreground mb-1">
+                        Utilities
+                      </p>
+                      <p className="font-semibold">
+                        {selectedTenancy.rent?.utilitiesIncluded
+                          ? "Included"
+                          : "Not included"}
                       </p>
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-8">
-                    {/* Rent Overview Section */}
-                    <div className="space-y-4">
-                      <div>
-                        <h3 className="text-lg font-semibold mb-1">
-                          Rent Overview
-                        </h3>
-                      </div>
-                      <div className="grid gap-8 md:grid-cols-2">
-                        <div className="space-y-2">
-                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                            Monthly Rent Amount
-                          </p>
-                          <p className="text-4xl font-semibold tracking-tight mt-3">
-                            ₹
-                            {selectedTenancy.rent?.amount?.toLocaleString() ||
-                              0}
-                          </p>
-                          <p className="text-sm text-muted-foreground mt-2 capitalize">
-                            {selectedTenancy.rent?.cycle || "monthly"} payment
-                            cycle
-                          </p>
-                        </div>
-                        <div className="space-y-6">
-                          {selectedTenancy.rent?.dueDateDay && (
-                            <div className="space-y-2">
-                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                Payment Due Date
-                              </p>
-                              <p className="text-xl font-semibold mt-1">
-                                {selectedTenancy.rent.dueDateDay}
-                                <span className="text-base font-normal text-muted-foreground ml-1">
-                                  {getOrdinalSuffix(
-                                    selectedTenancy.rent.dueDateDay
-                                  )}{" "}
-                                  of each month
+                  </div>
+
+                  <Separator />
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">
+                        Property Unit
+                      </p>
+                      <p className="font-semibold">
+                        {typeof selectedTenancy.unitId === "object" &&
+                        selectedTenancy.unitId?.title
+                          ? selectedTenancy.unitId.title
+                          : "—"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">
+                        Landlord
+                      </p>
+                      <p className="font-semibold">
+                        {typeof selectedTenancy.ownerId === "object" &&
+                        selectedTenancy.ownerId
+                          ? `${selectedTenancy.ownerId.firstName || ""} ${selectedTenancy.ownerId.lastName || ""}`.trim() ||
+                            selectedTenancy.ownerId.email ||
+                            "—"
+                          : "—"}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Recent Payments */}
+              {selectedTenancy.payments &&
+                selectedTenancy.payments.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Recent Payments</CardTitle>
+                      <CardDescription>
+                        Your latest rent payment transactions and receipts
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {selectedTenancy.payments
+                        .sort(
+                          (a, b) =>
+                            new Date(b.date).getTime() -
+                            new Date(a.date).getTime()
+                        )
+                        .slice(0, 5)
+                        .map((payment, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-4 border rounded-lg"
+                          >
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-1">
+                                <p className="font-semibold">
+                                  ₹{payment.amount.toLocaleString()}
+                                </p>
+                                <Badge variant="outline" className="text-xs">
+                                  Paid
+                                </Badge>
+                              </div>
+                              <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="h-3 w-3" />
+                                  {format(
+                                    parseISO(payment.date),
+                                    "MMM dd, yyyy"
+                                  )}
                                 </span>
-                              </p>
+                                {payment.method && (
+                                  <span className="flex items-center gap-1">
+                                    <CreditCard className="h-3 w-3" />
+                                    {payment.method}
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                          )}
-                          <div className="space-y-2">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                              Utilities
-                            </p>
-                            <p className="text-sm font-medium mt-1">
-                              {selectedTenancy.rent?.utilitiesIncluded
-                                ? "Included in rent"
-                                : "Not included"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Separator />
-
-                    {/* Tenancy Information Section */}
-                    <div className="space-y-4">
-                      <div>
-                        <h3 className="text-lg font-semibold mb-1">
-                          Tenancy Information
-                        </h3>
-                      </div>
-                      <div className="grid gap-6 sm:grid-cols-2">
-                        <div className="flex items-center gap-4 p-4 border rounded-lg">
-                          <div className="flex items-center justify-center w-12 h-12 rounded-md bg-muted">
-                            <Building2 className="h-5 w-5 text-muted-foreground" />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
-                              Property Unit
-                            </p>
-                            <p className="text-base font-semibold">
-                              {typeof selectedTenancy.unitId === "object" &&
-                              selectedTenancy.unitId?.title
-                                ? selectedTenancy.unitId.title
-                                : "—"}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-4 p-4 border rounded-lg">
-                          <div className="flex items-center justify-center w-12 h-12 rounded-md bg-muted">
-                            <User className="h-5 w-5 text-muted-foreground" />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
-                              Landlord
-                            </p>
-                            <p className="text-base font-semibold">
-                              {typeof selectedTenancy.ownerId === "object" &&
-                              selectedTenancy.ownerId
-                                ? `${selectedTenancy.ownerId.firstName || ""} ${selectedTenancy.ownerId.lastName || ""}`.trim() ||
-                                  selectedTenancy.ownerId.email ||
-                                  "—"
-                                : "—"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Section: Recent Payments */}
-                {selectedTenancy.payments &&
-                  selectedTenancy.payments.length > 0 && (
-                    <div className="space-y-4">
-                      <div>
-                        <h2 className="text-2xl font-semibold tracking-tight">
-                          Recent Payments
-                        </h2>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Latest payment transactions
-                        </p>
-                      </div>
-                      <Card className="border shadow-sm">
-                        <CardContent className="p-0">
-                          <div className="divide-y">
-                            {selectedTenancy.payments
-                              .sort(
-                                (a, b) =>
-                                  new Date(b.date).getTime() -
-                                  new Date(a.date).getTime()
-                              )
-                              .slice(0, 4)
-                              .map((payment, index) => (
-                                <div
-                                  key={index}
-                                  className="p-6 hover:bg-muted/30 transition-colors"
+                            {payment.receiptUrl && (
+                              <Button variant="ghost" size="sm" asChild>
+                                <a
+                                  href={payment.receiptUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                 >
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-4 flex-1">
-                                      <div className="flex items-center justify-center w-10 h-10 rounded-md bg-muted">
-                                        <CheckCircle2 className="h-5 w-5 text-muted-foreground" />
-                                      </div>
-                                      <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-3 mb-2">
-                                          <p className="text-lg font-semibold">
-                                            ₹{payment.amount.toLocaleString()}
-                                          </p>
-                                          <Badge
-                                            variant="outline"
-                                            className="text-xs"
-                                          >
-                                            Paid
-                                          </Badge>
-                                        </div>
-                                        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                                          <span className="flex items-center gap-1.5">
-                                            <Calendar className="h-3.5 w-3.5" />
-                                            {format(
-                                              parseISO(payment.date),
-                                              "MMM dd, yyyy"
-                                            )}
-                                          </span>
-                                          {payment.method && (
-                                            <span className="flex items-center gap-1.5">
-                                              <CreditCard className="h-3.5 w-3.5" />
-                                              {payment.method}
-                                            </span>
-                                          )}
-                                          {payment.reference && (
-                                            <span className="text-xs">
-                                              Ref: {payment.reference}
-                                            </span>
-                                          )}
-                                        </div>
-                                      </div>
-                                      {payment.receiptUrl && (
-                                        <Button
-                                          variant="ghost"
-                                          size="sm"
-                                          asChild
-                                          className="shrink-0"
-                                        >
-                                          <a
-                                            href={payment.receiptUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-2"
-                                          >
-                                            <Download className="h-4 w-4" />
-                                            <span className="hidden sm:inline">
-                                              Receipt
-                                            </span>
-                                          </a>
-                                        </Button>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
-                          {selectedTenancy.payments.length > 4 && (
-                            <div className="p-6 border-t">
-                              <Button
-                                variant="outline"
-                                className="w-full"
-                                asChild
-                              >
-                                <a href="/my-rent/history">
-                                  View All Payment History
+                                  <Download className="h-4 w-4" />
                                 </a>
                               </Button>
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
-                    </div>
-                  )}
-              </div>
-
-              {/* Right Sidebar - Summary Information (4 columns) */}
-              <div className="lg:col-span-4 space-y-6">
-                {/* Status Summary */}
-                <Card className="border shadow-sm">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base font-semibold">
-                      Tenancy Status
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Badge
-                      className={cn(
-                        "w-full justify-center py-2 text-sm font-medium",
-                        getTenancyStatusBadge(selectedTenancy.status)
+                            )}
+                          </div>
+                        ))}
+                      {selectedTenancy.payments.length > 5 && (
+                        <Button variant="outline" className="w-full" asChild>
+                          <a href="/my-rent/history">
+                            View All Payment History
+                          </a>
+                        </Button>
                       )}
-                    >
-                      {selectedTenancy.status}
-                    </Badge>
+                    </CardContent>
+                  </Card>
+                )}
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Deposit */}
+              {selectedTenancy.deposit && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Security Deposit</CardTitle>
+                    <CardDescription>
+                      The security deposit amount and its current status
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <p className="text-xl font-bold mb-1">
+                        ₹{selectedTenancy.deposit.amount?.toLocaleString() || 0}
+                      </p>
+                      {selectedTenancy.deposit.status && (
+                        <Badge
+                          variant="outline"
+                          className={cn(
+                            "text-xs",
+                            getDepositStatusBadge(
+                              selectedTenancy.deposit.status
+                            )
+                          )}
+                        >
+                          {selectedTenancy.deposit.status.replace("_", " ")}
+                        </Badge>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
+              )}
 
-                {/* Security Deposit */}
-                {selectedTenancy.deposit && (
-                  <Card className="border shadow-sm">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base font-semibold">
-                        Security Deposit
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div>
-                        <p className="text-2xl font-semibold mb-2">
-                          ₹
-                          {selectedTenancy.deposit.amount?.toLocaleString() ||
-                            0}
-                        </p>
-                        {selectedTenancy.deposit.status && (
-                          <Badge
-                            variant="outline"
-                            className={cn(
-                              "text-xs",
-                              getDepositStatusBadge(
-                                selectedTenancy.deposit.status
-                              )
-                            )}
-                          >
-                            {selectedTenancy.deposit.status.replace("_", " ")}
-                          </Badge>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Agreement Details */}
-                {selectedTenancy.agreement && (
-                  <Card className="border shadow-sm">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base font-semibold">
-                        Agreement Details
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {selectedTenancy.agreement.version && (
-                        <div>
-                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
-                            Version
-                          </p>
-                          <p className="text-base font-semibold">
-                            v{selectedTenancy.agreement.version}
-                          </p>
-                        </div>
-                      )}
-                      {selectedTenancy.agreement.signedAt && (
-                        <div>
-                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
-                            Signed Date
-                          </p>
-                          <p className="text-base font-semibold">
-                            {format(
-                              parseISO(selectedTenancy.agreement.signedAt),
-                              "MMM dd, yyyy"
-                            )}
-                          </p>
-                        </div>
-                      )}
-                      <div className="space-y-3 pt-2">
-                        {selectedTenancy.agreement.agreementId && (
-                          <Link
-                            href={`/my-agreement/${selectedTenancy.agreement.agreementId}`}
-                            className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors group"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="flex items-center justify-center w-10 h-10 rounded-md bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
-                                <FileText className="h-5 w-5" />
-                              </div>
-                              <div>
-                                <p className="text-sm font-semibold">
-                                  View Agreement Details
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  View full agreement information
-                                </p>
-                              </div>
-                            </div>
-                            <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                          </Link>
-                        )}
-                        {selectedTenancy.agreement.pdfUrl && (
-                          <Button variant="outline" className="w-full" asChild>
-                            <a
-                              href={selectedTenancy.agreement.pdfUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center justify-center gap-2"
-                            >
-                              <Download className="h-4 w-4" />
-                              Download Agreement PDF
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+              {/* Agreement */}
+              {selectedTenancy.agreement && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Agreement</CardTitle>
+                    <CardDescription>
+                      View and download your rental agreement documents
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {selectedTenancy.agreement.agreementId && (
+                      <Button variant="outline" className="w-full" asChild>
+                        <Link
+                          href={`/my-agreement/${selectedTenancy.agreement.agreementId}`}
+                        >
+                          <FileText className="h-4 w-4 mr-2" />
+                          View Agreement
+                        </Link>
+                      </Button>
+                    )}
+                    {selectedTenancy.agreement.pdfUrl && (
+                      <Button variant="outline" className="w-full" asChild>
+                        <a
+                          href={selectedTenancy.agreement.pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Download PDF
+                        </a>
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
             </div>
-          </>
+          </div>
         )}
       </div>
     </AppLayout>

@@ -47,6 +47,8 @@ interface PopulatedTenancy extends Omit<
 
 const getTenancyStatusStyle = (status: string) => {
   switch (status) {
+    case "upcoming":
+      return "bg-blue-500 text-white";
     case "active":
       return "bg-green-500 text-white";
     case "terminated":

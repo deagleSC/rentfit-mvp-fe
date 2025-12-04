@@ -16,7 +16,7 @@ export interface CreateTenancyPayload {
     amount?: number;
     status?: "upcoming" | "held" | "returned" | "disputed";
   };
-  status?: "active" | "terminated" | "pendingRenewal";
+  status?: "upcoming" | "active" | "terminated" | "pendingRenewal";
 }
 
 export interface Payment {

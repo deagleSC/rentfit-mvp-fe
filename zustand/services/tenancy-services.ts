@@ -14,7 +14,7 @@ export interface GetTenanciesParams {
   ownerId?: string;
   tenantId?: string;
   unitId?: string;
-  status?: "active" | "terminated" | "pendingRenewal";
+  status?: "upcoming" | "active" | "terminated" | "pendingRenewal";
   page?: number;
   limit?: number;
 }

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { NotificationButton } from "@/components/ui/notification-button";
+import { ClientOnly } from "@/components/client-only";
 
 export interface BreadcrumbItem {
   title: string;
@@ -75,8 +76,12 @@ export default function AppLayout({
             </Breadcrumb>
           </div>
           <div className="flex items-center gap-2">
-            <NotificationButton />
-            <ModeToggle />
+            <ClientOnly>
+              <NotificationButton />
+            </ClientOnly>
+            <ClientOnly>
+              <ModeToggle />
+            </ClientOnly>
           </div>
         </header>
         <div className={`${className} flex flex-1 flex-col gap-4 p-6`}>

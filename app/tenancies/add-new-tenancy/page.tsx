@@ -293,7 +293,7 @@ export default function AddNewTenancyPage() {
         agreementId: agreementId,
         rent: formData.rent,
         deposit: formData.deposit,
-        status: "active",
+        // Status defaults to 'upcoming' in the backend
       });
 
       if (tenancy) {
